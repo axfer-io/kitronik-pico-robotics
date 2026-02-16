@@ -1,0 +1,13 @@
+build/
+*.elf
+*.uf2
+*.bin
+*.map
+*.o
+*.d
+*.a
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+.vscode/
+compile_commands.json
