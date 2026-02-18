@@ -22,6 +22,14 @@ public:
     // Steppers: motor=1 or 2 (usa pares de motores DC como bobinas)
     bool step(uint8_t motor, char direction, int steps, int speed_ms = 20, bool holdPosition = false);
     bool stepAngle(uint8_t motor, char direction, float angle_deg, int speed_ms = 20, bool holdPosition = false, int stepsPerRev = 200);
+    
+    // Servo calibration (per channel 1..8)
+    bool setServoPulseRangeUs(uint8_t servo, uint16_t min_us, uint16_t max_us);
+    void setAllServoPulseRangeUs(uint16_t min_us, uint16_t max_us);
+
+    // Optional: direct pulse write (good for calibration)
+    bool servoWriteUs(uint8_t servo, uint16_t pulse_us);
+
 
 private:
     // Helpers I2C
@@ -49,4 +57,21 @@ private:
     // Servo mapping de tu código
     uint8_t prescale_val_ = 0x79;        // 121 decimal = 0x79
     static constexpr float PI_ESTIMATE = 3.1416f;
+    
+    // Servo per-channel ranges (defaults 500..2500)
+    uint16_t servo_min_us_[8];
+    uint16_t servo_max_us_[8];
+
+    static constexpr uint16_t SERVO_MIN_US_DEFAULT = 500;
+    static constexpr uint16_t SERVO_MAX_US_DEFAULT = 2500;
+
+    // PCA9685 oscillator (typical). Used to compute PWM frequency from prescale.
+    static constexpr float PCA9685_OSC_HZ = 25000000.0f;
+
+    // Helpers
+    float pca_pwm_freq_hz_() const;
+    uint16_t us_to_counts_(uint16_t pulse_us) const;
+    uint16_t degrees_to_us_(uint8_t servo, int degrees) const;
+    uint16_t radians_to_us_(uint8_t servo, float radians) const;
+
 };
